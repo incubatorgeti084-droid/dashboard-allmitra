@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report 6 Pulau</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-slate-50" x-data="{ 
+    mobileMenu: false,
+    pulauData: [
+        { nama: 'Bali & Nusa Tenggara', total: '16.426', installer: '2.749', persen: '17%' },
+        { nama: 'Jawa', total: '91.195', installer: '2.201', persen: '2%' },
+        { nama: 'Kalimantan', total: '18.488', installer: '1.101', persen: '6%' },
+        { nama: 'Sulawesi', total: '24.362', installer: '789', persen: '3%' },
+        { nama: 'Sumatera', total: '46.072', installer: '184', persen: '0.4%' },
+        { nama: 'Maluku & Papua', total: '10.816', installer: '40', persen: '0.3%' },
+        { nama: 'LAINNYA', total: '16.184', installer: '85', persen: '0.5%' }
+    ]
+}">
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 px-4 h-16 flex items-center justify-between">
+        <span class="text-xl font-bold text-blue-400">MONITORING MITRA</span>
+        <div class="hidden md:flex space-x-4">
+            <a href="index.html" class="text-slate-300 hover:text-white px-3 py-2">Home</a>
+            <a href="report-provinsi.html" class="text-slate-300 hover:text-white px-3 py-2">38 Provinsi</a>
+            <a href="report-pulau.html" class="bg-slate-800 px-3 py-2 rounded-md">6 Pulau</a>
+        </div>
+        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </nav>
+    <div x-show="mobileMenu" class="md:hidden bg-slate-800 border-t border-slate-700 px-2 py-3 space-y-1">
+        <a href="index.html" class="block text-slate-300 px-3 py-2">Home</a>
+        <a href="report-provinsi.html" class="block text-slate-300 px-3 py-2">38 Provinsi</a>
+        <a href="report-pulau.html" class="block bg-slate-900 text-white px-3 py-2 rounded-md">6 Pulau</a>
+    </div>
+
+    <header class="max-w-7xl mx-auto py-8 px-4"><h1 class="text-3xl font-black text-slate-900 uppercase">#REPORT 6 PULAU</h1></header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-20 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <template x-for="(item, index) in pulauData" :key="index">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 hover:ring-2 hover:ring-blue-100 transition">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-black text-slate-800 leading-tight" x-text="item.nama"></h3>
+                    <div class="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold" x-text="index + 1"></div>
+                </div>
+                <div class="space-y-6 text-lg">
+                    <div class="flex justify-between border-b border-slate-50 pb-2"><span class="text-slate-500 font-medium">Total Sekolah</span><span class="font-bold" x-text="item.total"></span></div>
+                    <div class="flex justify-between border-b border-slate-50 pb-2"><span class="text-slate-500 font-medium">Ada Installer</span><span class="font-bold text-emerald-600" x-text="item.installer"></span></div>
+                    <div>
+                        <div class="flex justify-between mb-2"><span class="text-blue-600 font-black">Persentase Cover</span><span class="text-blue-600 font-black" x-text="item.persen"></span></div>
+                        <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden"><div class="bg-blue-500 h-full transition-all duration-1000" :style="`width: ${item.persen}`"></div></div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </main>
+</body>
+</html>

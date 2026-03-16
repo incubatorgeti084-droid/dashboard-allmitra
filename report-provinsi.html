@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report 38 Provinsi - Monitoring Nasional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-slate-50 font-sans" x-data="{ 
+    mobileMenu: false,
+    provinsiData: [
+        { nama: 'Prov. Gorontalo', kCap: '6/6', kPer: '100%', kecCap: '77/77', kecPer: '100%', sCap: '59/1429', sPer: '4%', sSisa: '1370' },
+        { nama: 'Prov. Sulawesi Barat', kCap: '6/6', kPer: '100%', kecCap: '69/69', kecPer: '100%', sCap: '108/2019', sPer: '5%', sSisa: '1911' },
+        { nama: 'Prov. Jambi', kCap: '11/11', kPer: '100%', kecCap: '142/142', kecPer: '100%', sCap: '4/3656', sPer: '0%', sSisa: '3652' },
+        { nama: 'Prov. Maluku Utara', kCap: '9/10', kPer: '90%', kecCap: '110/118', kecPer: '93%', sCap: '3/2233', sPer: '0%', sSisa: '2230' },
+        { nama: 'Prov. Kepulauan Riau', kCap: '6/7', kPer: '86%', kecCap: '66/80', kecPer: '83%', sCap: '0/1704', sPer: '0%', sSisa: '1704' },
+        { nama: 'Prov. D.K.I. Jakarta', kCap: '5/6', kPer: '83%', kecCap: '42/44', kecPer: '95%', sCap: '85/4412', sPer: '2%', sSisa: '4327' },
+        { nama: 'Prov. Papua Barat Daya', kCap: '5/6', kPer: '83%', kecCap: '101/124', kecPer: '81%', sCap: '0/852', sPer: '0%', sSisa: '852' },
+        { nama: 'Prov. Maluku', kCap: '9/11', kPer: '82%', kecCap: '81/118', kecPer: '69%', sCap: '23/2981', sPer: '1%', sSisa: '2958' },
+        { nama: 'Prov. Jawa Barat', kCap: '22/27', kPer: '81%', kecCap: '428/583', kecPer: '73%', sCap: '1489/31211', sPer: '5%', sSisa: '29722' },
+        { nama: 'Prov. Sulawesi Utara', kCap: '12/15', kPer: '80%', kecCap: '138/171', kecPer: '81%', sCap: '208/3386', sPer: '6%', sSisa: '3178' },
+        { nama: 'Prov. Sulawesi Tenggara', kCap: '13/17', kPer: '76%', kecCap: '180/222', kecPer: '81%', sCap: '281/3869', sPer: '7%', sSisa: '3588' },
+        { nama: 'Prov. Sulawesi Selatan', kCap: '17/24', kPer: '71%', kecCap: '148/306', kecPer: '48%', sCap: '99/9395', sPer: '1%', sSisa: '9296' },
+        { nama: 'Prov. NTT', kCap: '15/22', kPer: '68%', kecCap: '209/312', kecPer: '67%', sCap: '2424/8066', sPer: '30%', sSisa: '5642' },
+        { nama: 'Prov. Yogyakarta', kCap: '3/5', kPer: '60%', kecCap: '44/77', kecPer: '57%', sCap: '0/2730', sPer: '0%', sSisa: '2730' },
+        { nama: 'Prov. Bengkulu', kCap: '6/10', kPer: '60%', kecCap: '84/128', kecPer: '66%', sCap: '0/2143', sPer: '0%', sSisa: '2143' },
+        { nama: 'Prov. Kalimantan Timur', kCap: '6/10', kPer: '60%', kecCap: '56/104', kecPer: '54%', sCap: '410/3169', sPer: '13%', sSisa: '2759' },
+        { nama: 'Prov. Kalimantan Utara', kCap: '3/5', kPer: '60%', kecCap: '35/55', kecPer: '64%', sCap: '27/807', sPer: '3%', sSisa: '780' },
+        { nama: 'Prov. NTB', kCap: '6/10', kPer: '60%', kecCap: '58/117', kecPer: '50%', sCap: '309/5239', sPer: '6%', sSisa: '4930' },
+        { nama: 'Prov. Riau', kCap: '7/12', kPer: '58%', kecCap: '106/172', kecPer: '62%', sCap: '180/6039', sPer: '3%', sSisa: '5859' },
+        { nama: 'Prov. Kalimantan Barat', kCap: '8/14', kPer: '57%', kecCap: '106/173', kecPer: '61%', sCap: '634/6562', sPer: '10%', sSisa: '5928' },
+        { nama: 'Prov. Sumatera Utara', kCap: '17/33', kPer: '52%', kecCap: '254/454', kecPer: '56%', sCap: '0/14357', sPer: '0%', sSisa: '14357' },
+        { nama: 'Prov. Banten', kCap: '4/8', kPer: '50%', kecCap: '44/152', kecPer: '29%', sCap: '2/7645', sPer: '0%', sSisa: '7643' },
+        { nama: 'Prov. Kalimantan Tengah', kCap: '6/14', kPer: '43%', kecCap: '56/136', kecPer: '41%', sCap: '30/3950', sPer: '1%', sSisa: '3920' },
+        { nama: 'Prov. Sulawesi Tengah', kCap: '5/13', kPer: '38%', kecCap: '40/175', kecPer: '23%', sCap: '34/4264', sPer: '1%', sSisa: '4230' },
+        { nama: 'Prov. Sumatera Selatan', kCap: '6/17', kPer: '35%', kecCap: '94/241', kecPer: '39%', sCap: '0/7138', sPer: '0%', sSisa: '7138' },
+        { nama: 'Prov. Jawa Tengah', kCap: '12/35', kPer: '34%', kecCap: '149/555', kecPer: '27%', sCap: '347/24626', sPer: '1%', sSisa: '24279' },
+        { nama: 'Prov. Lampung', kCap: '5/15', kPer: '33%', kecCap: '93/225', kecPer: '41%', sCap: '0/7241', sPer: '0%', sSisa: '7241' },
+        { nama: 'Prov. Aceh', kCap: '7/23', kPer: '30%', kecCap: '105/283', kecPer: '37%', sCap: '0/5669', sPer: '0%', sSisa: '5669' },
+        { nama: 'Prov. Jawa Timur', kCap: '10/38', kPer: '26%', kecCap: '119/629', kecPer: '19%', sCap: '363/27713', sPer: '1%', sSisa: '27350' },
+        { nama: 'Prov. Bali', kCap: '2/9', kPer: '22%', kecCap: '9/57', kecPer: '16%', sCap: '16/3121', sPer: '1%', sSisa: '3105' },
+        { nama: 'Prov. Kep. Bangka Belitung', kCap: '1/7', kPer: '14%', kecCap: '5/47', kecPer: '11%', sCap: '0/1230', sPer: '0%', sSisa: '1230' },
+        { nama: 'Prov. Papua Tengah', kCap: '1/8', kPer: '13%', kecCap: '4/113', kecPer: '4%', sCap: '14/852', sPer: '2%', sSisa: '838' },
+        { nama: 'Prov. Papua', kCap: '1/9', kPer: '11%', kecCap: '5/98', kecPer: '5%', sCap: '0/1303', sPer: '0%', sSisa: '1303' }
+    ]
+}">
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 px-4 h-16 flex items-center justify-between">
+        <span class="text-xl font-bold text-blue-400">MONITORING MITRA</span>
+        <div class="hidden md:flex space-x-4">
+            <a href="index.html" class="text-slate-300 hover:text-white px-3 py-2">Home</a>
+            <a href="report-provinsi.html" class="bg-slate-800 px-3 py-2 rounded-md">38 Provinsi</a>
+            <a href="report-pulau.html" class="text-slate-300 hover:text-white px-3 py-2">6 Pulau</a>
+        </div>
+        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+    </nav>
+    <div x-show="mobileMenu" class="md:hidden bg-slate-800 border-t border-slate-700 px-2 py-3 space-y-1">
+        <a href="index.html" class="block text-slate-300 px-3 py-2">Home</a>
+        <a href="report-provinsi.html" class="block bg-slate-900 text-white px-3 py-2 rounded-md">38 Provinsi</a>
+        <a href="report-pulau.html" class="block text-slate-300 px-3 py-2">6 Pulau</a>
+    </div>
+
+    <header class="max-w-7xl mx-auto py-8 px-4">
+        <h1 class="text-3xl font-black text-slate-900 uppercase">#REKAPITULASI CAPAIAN PROVINSI</h1>
+        <p class="text-slate-500 text-sm mt-1">Berdasarkan Data Terbaru: Target vs Capaian Riil </p>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <template x-for="(item, index) in provinsiData" :key="index">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-lg text-slate-800" x-text="item.nama"></h3>
+                    <span class="bg-blue-600 text-white text-xs h-6 w-6 flex items-center justify-center rounded-full font-bold" x-text="index + 1"></span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-500 font-semibold uppercase tracking-wider">Kabupaten</span>
+                            <span class="text-blue-600 font-bold text-sm" x-text="item.kPer"></span>
+                        </div>
+                        <div class="bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-blue-500 h-full" :style="`width: ${item.kPer}`"></div>
+                        </div>
+                        <p class="text-[11px] mt-1 text-slate-400 font-medium" x-text="item.kCap"></p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-500 font-semibold uppercase tracking-wider">Kecamatan</span>
+                            <span class="text-emerald-600 font-bold text-sm" x-text="item.kecPer"></span>
+                        </div>
+                        <div class="bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full" :style="`width: ${item.kecPer}`"></div>
+                        </div>
+                        <p class="text-[11px] mt-1 text-slate-400 font-medium" x-text="item.kecCap"></p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-500 font-semibold uppercase tracking-wider">Sekolah</span>
+                            <span class="text-orange-500 font-bold text-sm" x-text="item.sPer"></span>
+                        </div>
+                        <div class="bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-orange-500 h-full" :style="`width: ${item.sPer}`"></div>
+                        </div>
+                        <div class="flex justify-between items-end mt-1">
+                            <p class="text-[11px] text-slate-400 font-medium" x-text="item.sCap"></p>
+                            <p class="text-[10px] text-red-500 italic font-bold">(Sisa: <span x-text="item.sSisa"></span>)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </main>
+</body>
+</html>
