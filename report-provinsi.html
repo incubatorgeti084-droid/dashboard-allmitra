@@ -47,21 +47,33 @@
         { nama: 'Prov. Papua Pegunungan', kCap: '1/8', kPer: '13%', kecCap: '39/232', kecPer: '17%', sCap: '0/954', sPer: '0%', sSisa: '954' },
         { nama: 'Prov. Papua Tengah', kCap: '1/8', kPer: '13%', kecCap: '4/113', kecPer: '4%', sCap: '14/852', sPer: '2%', sSisa: '838' },
         { nama: 'Prov. Sumatera Barat', kCap: '0/19', kPer: '0%', kecCap: '0/179', kecPer: '0%', sCap: '0/5000', sPer: '0%', sSisa: '5000' },
-        { nama: 'Prov. Papua Barat Daya', kCap: '1/6', kPer: '17%', kecCap: '10/124', kecPer: '8%', sCap: '0/852', sPer: '0%', sSisa: '852' }
+        { nama: 'Prov. Papua Barat Daya (Duplicate)', kCap: '1/6', kPer: '17%', kecCap: '10/124', kecPer: '8%', sCap: '0/852', sPer: '0%', sSisa: '852' }
     ]
 }">
-    <nav class="bg-slate-900 text-white sticky top-0 z-50 px-4 h-16 flex items-center justify-between">
-        <span class="text-xl font-bold text-blue-400">MONITORING MITRA</span>
-        <div class="hidden md:flex space-x-4">
-            <a href="#" class="text-slate-300 hover:text-white px-3 py-2">Home</a>
-            <a href="#" class="bg-slate-800 px-3 py-2 rounded-md">38 Provinsi</a>
-            <a href="#" class="text-slate-300 hover:text-white px-3 py-2">6 Pulau</a>
+    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <span class="text-xl font-bold tracking-wider text-indigo-300">MONITORING MITRA</span>
+            <div class="hidden md:flex space-x-4 text-sm uppercase font-medium">
+                <a href="index.html" class="hover:text-indigo-300 px-3 py-2 transition">Home</a>
+                <a href="report-provinsi.html" class="bg-indigo-800 px-3 py-2 rounded-md">38 Provinsi</a>
+                <a href="report-pulau.html" class="hover:text-indigo-300 px-3 py-2 transition">Pulau</a>
+                <a href="report-all-kornas.html" class="hover:text-indigo-300 px-3 py-2 transition">All Kornas</a>
+            </div>
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+        <div x-show="mobileMenu" class="md:hidden bg-indigo-800 border-t border-indigo-700 px-2 pt-2 pb-3 space-y-1">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">Home</a>
+            <a href="report-provinsi.html" class="block px-3 py-2 rounded-md text-white bg-indigo-900">38 Provinsi</a>
+            <a href="report-pulau.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">Pulau</a>
+            <a href="report-all-kornas.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">All Kornas</a>
         </div>
     </nav>
 
     <header class="max-w-7xl mx-auto py-8 px-4">
         <h1 class="text-3xl font-black text-slate-900 uppercase">#REKAPITULASI CAPAIAN PROVINSI (38)</h1>
-        <p class="text-slate-500 text-sm mt-1">Berdasarkan Data Terbaru: 16 Maret 2026 </p>
+        <p class="text-slate-500 text-sm mt-1">Berdasarkan Data Terbaru: 14 Maret 2026 </p>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 pb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -69,7 +81,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-bold text-lg text-slate-800" x-text="item.nama"></h3>
-                    <span class="bg-blue-600 text-white text-xs h-6 w-6 flex items-center justify-center rounded-full font-bold" x-text="index + 1"></span>
+                    <span class="bg-indigo-600 text-white text-xs h-6 w-6 flex items-center justify-center rounded-full font-bold" x-text="index + 1"></span>
                 </div>
                 
                 <div class="space-y-4">

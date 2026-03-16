@@ -8,31 +8,42 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-900" x-data="{ mobileMenu: false }">
-    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <span class="text-xl font-bold tracking-wider text-blue-400">MONITORING MITRA</span>
-            <div class="hidden md:flex space-x-4">
-                <a href="index.html" class="bg-slate-800 px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                <a href="report-provinsi.html" class="text-slate-300 hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">Report 38 Provinsi</a>
-                <a href="report-pulau.html" class="text-slate-300 hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition">Report 6 Pulau</a>
+            <span class="text-xl font-bold tracking-wider text-indigo-300">MONITORING MITRA</span>
+            
+            <div class="hidden md:flex space-x-4 text-sm uppercase font-medium">
+                <a href="index.html" class="bg-indigo-800 px-3 py-2 rounded-md">Home</a>
+                <a href="report-provinsi.html" class="hover:text-indigo-300 px-3 py-2 transition">38 Provinsi</a>
+                <a href="report-pulau.html" class="hover:text-indigo-300 px-3 py-2 transition">Pulau</a>
+                <a href="report-all-kornas.html" class="hover:text-indigo-300 px-3 py-2 transition">All Kornas</a>
             </div>
+
             <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/>
+                </svg>
             </button>
         </div>
-        <div x-show="mobileMenu" class="md:hidden bg-slate-800 border-t border-slate-700 px-2 pt-2 pb-3 space-y-1">
-            <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-slate-900">Home</a>
-            <a href="report-provinsi.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Report 38 Provinsi</a>
-            <a href="report-pulau.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Report 6 Pulau</a>
+
+        <div x-show="mobileMenu" class="md:hidden bg-indigo-800 border-t border-indigo-700 px-2 pt-2 pb-3 space-y-1">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-white bg-indigo-900">Home</a>
+            <a href="report-provinsi.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">38 Provinsi</a>
+            <a href="report-pulau.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">Pulau</a>
+            <a href="report-all-kornas.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">All Kornas</a>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto py-20 px-4 text-center">
-        <h1 class="text-4xl font-extrabold sm:text-6xl mb-6">Portal <span class="text-blue-600">Monitoring Nasional</span></h1>
-        <p class="text-xl text-slate-500 max-w-2xl mx-auto mb-10">Diupdate pada 14 Maret 2024</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="report-provinsi.html" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition">Laporan Provinsi</a>
-            <a href="report-pulau.html" class="bg-white text-slate-900 border border-slate-200 px-8 py-3 rounded-xl font-bold hover:bg-slate-50 shadow-sm transition">Laporan Pulau</a>
+    <main class="max-w-7xl mx-auto py-12 px-4">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-extrabold sm:text-6xl mb-6">Portal <span class="text-indigo-600">Monitoring Nasional</span></h1>
+            <p class="text-xl text-slate-500 max-w-2xl mx-auto mb-10">Update Data Terakhir: 14 Maret 2026</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="report-provinsi.html" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition w-full sm:w-auto">Report Provinsi</a>
+                <a href="report-pulau.html" class="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 shadow-lg transition w-full sm:w-auto">Report Pulau</a>
+                <a href="report-all-kornas.html" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition w-full sm:w-auto">Report All Kornas</a>
+            </div>
         </div>
     </main>
 </body>
