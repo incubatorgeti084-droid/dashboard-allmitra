@@ -3,127 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report All Kornas - Monitoring Nasional</title>
+    <title>Report All Kornas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
-<body class="bg-[#f8fafc]" x-data="{ 
+<body class="bg-slate-50 text-slate-900" x-data="{ 
     mobileMenu: false,
+    searchQuery: '',
     kornasData: [
-        { nama: 'Rustan', wilayah: '4 Provinsi', k: '46', kT: '58', kS: '12', kP: '79.31%', kc: '560', kcT: '712', kcS: '152', kcP: '79%', s: '6750', sT: '20861', sS: '14111', sP: '37%' },
-        { nama: 'Nurul Huda', wilayah: '9 Provinsi', k: '32', kT: '69', kS: '37', kP: '46.38%', kc: '416', kcT: '1058', kcS: '642', kcP: '39%', s: '4259', sT: '15127', sS: '10868', sP: '31.78%' },
-        { nama: 'OVOY', wilayah: '38 Provinsi', k: '122', kT: '514', kS: '392', kP: '23.74%', kc: '2058', kcT: '6846', kcS: '4788', kcP: '30%', s: '12133', sT: '286954', sS: '274821', sP: '5.44%' },
-        { nama: 'Yohanah', wilayah: '22 Provinsi', k: '117', kT: '322', kS: '205', kP: '36.34%', kc: '1709', kcT: '4390', kcS: '2681', kcP: '39%', s: '7640', sT: '217420', sS: '209780', sP: '4.63%' },
-        { nama: 'Bonggas Adhi Chandra', wilayah: '18 Provinsi', k: '172', kT: '308', kS: '136', kP: '55.84%', kc: '2417', kcT: '4302', kcS: '1885', kcP: '56%', s: '5193', sT: '205058', sS: '199865', sP: '3.32%' },
-        { nama: 'ALIT', wilayah: '38 Provinsi', k: '226', kT: '514', kS: '288', kP: '43.97%', kc: '3145', kcT: '6846', kcS: '3701', kcP: '46%', s: '6404', sT: '286954', sS: '280550', sP: '2.87%' },
-        { nama: 'Kadiriyanto', wilayah: '9 Provinsi', k: '29', kT: '194', kS: '165', kP: '14.95%', kc: '494', kcT: '2929', kcS: '2435', kcP: '17%', s: '3409', sT: '164915', sS: '161506', sP: '2.79%' },
-        { nama: 'Fuad', wilayah: '3 Provinsi', k: '33', kT: '52', kS: '19', kP: '63.46%', kc: '371', kcT: '627', kcS: '256', kcP: '59%', s: '300', sT: '28642', sS: '28342', sP: '1.32%' },
-        { nama: 'Sigit Gozali', wilayah: '6 Provinsi', k: '1', kT: '42', kS: '41', kP: '2.38%', kc: '18', kcT: '729', kcS: '711', kcP: '2%', s: '65', sT: '6018', sS: '5953', sP: '1.16%' },
-        { nama: 'Fakhri Mashar', wilayah: '38 Provinsi', k: '66', kT: '514', kS: '448', kP: '12.84%', kc: '971', kcT: '6846', kcS: '5875', kcP: '14%', s: '1500', sT: '286954', sS: '285454', sP: '0.67%' }
-    ]
+        { nama: 'Rustan', wilayah: '4 Provinsi', k: '46', kT: '58', kS: '12', kP: '79.31%', kc: '562', kcT: '715', kcS: '153', kcP: '79%', s: '7.001', sT: '18.243', sS: '11.242', sP: '38.38%' },
+        { nama: 'Bonggas Adhi Chandra', wilayah: '26 Provinsi', k: '178', kT: '416', kS: '238', kP: '42.79%', kc: '2.553', kcT: '5.712', kcS: '3.159', kcP: '45%', s: '9.552', sT: '189.118', sS: '179.566', sP: '5.05%' },
+        { nama: 'OVOY', wilayah: '38 Provinsi', k: '124', kT: '514', kS: '390', kP: '24.12%', kc: '2.131', kcT: '7.088', kcS: '4.957', kcP: '30%', s: '13.307', sT: '223.150', sS: '209.843', sP: '5.96%' },
+        { nama: 'Yohana', wilayah: '22 Provinsi', k: '121', kT: '322', kS: '201', kP: '37.58%', kc: '1.801', kcT: '4.542', kcS: '2.741', kcP: '40%', s: '9.188', sT: '165.068', sS: '155.880', sP: '5.57%' },
+        { nama: 'ALIT', wilayah: '38 Provinsi', k: '226', kT: '514', kS: '288', kP: '43.97%', kc: '3.190', kcT: '7.088', kcS: '3.898', kcP: '45%', s: '7.307', sT: '222.798', sS: '215.491', sP: '3.28%' },
+        { nama: 'Kadiriyanto', wilayah: '9 Provinsi', k: '29', kT: '194', kS: '165', kP: '14.95%', kc: '502', kcT: '3.037', kcS: '2.535', kcP: '17%', s: '3.769', sT: '122.064', sS: '118.295', sP: '3.09%' },
+        { nama: 'Nurul Huda', wilayah: '9 Provinsi', k: '32', kT: '69', kS: '37', kP: '46.38%', kc: '416', kcT: '1.061', kcS: '645', kcP: '39%', s: '4.544', sT: '13.402', sS: '8.858', sP: '33.91%' },
+        { nama: 'Fuad', wilayah: '3 Provinsi', k: '33', kT: '52', kS: '19', kP: '63.46%', kc: '371', kcT: '628', kcS: '257', kcP: '59%', s: '321', sT: '22.717', sS: '22.396', sP: '1.41%' },
+        { nama: 'Fakhri Mashar', wilayah: '38 Provinsi', k: '75', kT: '514', kS: '439', kP: '14.59%', kc: '1.131', kcT: '7.088', kcS: '5.957', kcP: '16%', s: '1.823', sT: '222.766', sS: '220.943', sP: '0.82%' },
+        { nama: 'Sigit Gozali', wilayah: '6 Provinsi', k: '1', kT: '42', kS: '41', kP: '2.38%', kc: '18', kcT: '732', kcS: '714', kcP: '2%', s: '65', sT: '5.602', sS: '5.537', sP: '1.16%' }
+    ],
+    get filteredKornas() {
+        return this.kornasData.filter(i => i.nama.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    }
 }">
-    <nav class="bg-[#3b348b] text-white sticky top-0 z-50 shadow-lg">
+    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-lg border-b border-indigo-700">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <span class="text-xl font-bold tracking-wider">MONITORING KORNAS</span>
-            <div class="hidden md:flex space-x-4 text-sm font-semibold">
-                <a href="index.html" class="px-3 py-2 hover:bg-white/10 rounded transition">HOME</a>
-                <a href="report-provinsi.html" class="px-3 py-2 hover:bg-white/10 rounded transition uppercase">38 Provinsi</a>
-                <a href="report-pulau.html" class="px-3 py-2 hover:bg-white/10 rounded transition uppercase">Pulau</a>
-                <a href="report-all-kornas.html" class="px-3 py-2 bg-indigo-900 rounded transition uppercase">All Kornas</a>
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-indigo-500 rounded flex items-center justify-center font-black text-white">M</div>
+                <span class="text-xl font-bold tracking-tighter uppercase">Monitoring Mitra</span>
             </div>
+            
+            <div class="hidden md:flex space-x-1 text-sm font-medium">
+                <a href="index.html" class="hover:bg-indigo-800 px-4 py-2 rounded-lg transition">Home</a>
+                <a href="report-provinsi.html" class="hover:bg-indigo-800 px-4 py-2 rounded-lg transition">38 Provinsi</a>
+                <a href="report-pulau.html" class="hover:bg-indigo-800 px-4 py-2 rounded-lg transition">Pulau</a>
+                <a href="report-all-kornas.html" class="bg-indigo-600 px-4 py-2 rounded-lg shadow-inner text-white font-bold">All Kornas</a>
+            </div>
+
+            <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 hover:bg-indigo-800 rounded-lg">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
         </div>
     </nav>
 
-    <header class="bg-[#3b348b] pt-8 pb-20 px-4">
+    <header class="bg-indigo-900 pt-12 pb-24 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+                <span class="bg-indigo-500/30 text-indigo-200 text-[10px] font-black px-3 py-1 rounded mb-3 inline-block uppercase tracking-widest">Mitra Geti 2026</span>
+                <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">Dashboard Capaian Kornas</h1>
+                <p class="text-indigo-300 mt-2 font-bold text-sm italic">Sinkronisasi Terakhir: 16 Maret 2026</p>
+            </div>
+
+            <div class="relative w-full md:w-80">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2"/></svg>
+                </span>
+                <input 
+                    type="text" 
+                    x-model="searchQuery" 
+                    placeholder="Cari Kornas..." 
+                    class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-lg text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-sm"
+                >
+            </div>
+        </div>
+
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div class="bg-white/10 border border-white/20 p-5 rounded-lg backdrop-blur-sm">
-                <p class="text-indigo-100 text-[10px] font-bold uppercase mb-2">Total Kabupaten</p>
-                <p class="text-4xl font-black text-white">514</p>
+            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kabupaten</p>
+                <p class="text-4xl font-black text-white tracking-tighter">514</p>
             </div>
-            <div class="bg-white/10 border border-white/20 p-5 rounded-lg backdrop-blur-sm">
-                <p class="text-indigo-100 text-[10px] font-bold uppercase mb-2">Total Kecamatan</p>
-                <p class="text-4xl font-black text-white">6.852</p>
+            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kecamatan</p>
+                <p class="text-4xl font-black text-white tracking-tighter">7.088</p>
             </div>
-            <div class="bg-white/10 border border-white/20 p-5 rounded-lg backdrop-blur-sm">
-                <p class="text-indigo-100 text-[10px] font-bold uppercase mb-2">Total Sekolah</p>
-                <p class="text-4xl font-black text-white">286.954</p>
+            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Target Sekolah</p>
+                <p class="text-4xl font-black text-white tracking-tighter">222.798</p>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 -mt-12 pb-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <template x-for="(item, index) in kornasData" :key="index">
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col">
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="text-2xl font-black text-slate-800 tracking-tight" x-text="item.nama"></h3>
-                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded" x-text="'#' + (index + 1)"></span>
-                    </div>
-                    <p class="text-blue-600 text-xs font-bold uppercase mb-8" x-text="item.wilayah"></p>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between items-end mb-1 text-[11px] font-bold">
-                                <div class="text-slate-400 uppercase tracking-tighter">Kabupaten</div>
-                                <div class="text-blue-600" x-text="item.kP"></div>
+    <main class="max-w-7xl mx-auto px-4 -mt-12 pb-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <template x-for="(item, index) in filteredKornas" :key="index">
+                <div class="bg-white rounded-3xl shadow-xl border-t-8 border-indigo-900 overflow-hidden flex flex-col group hover:shadow-2xl transition-all duration-300">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tighter leading-tight" x-text="item.nama"></h3>
+                                <p class="text-blue-600 text-[10px] font-black uppercase tracking-widest mt-1" x-text="item.wilayah"></p>
                             </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-xs font-black text-slate-800" x-text="item.k + ' / ' + item.kT"></span>
-                                <span class="text-[10px] text-red-500 italic font-medium" x-text="'(Sisa: ' + item.kS + ')'"></span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-blue-500 h-full rounded-full" :style="'width: ' + item.kP"></div>
-                            </div>
+                            <span class="bg-indigo-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg" x-text="'KORNAS ' + (index + 1)"></span>
                         </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase">Kabupaten</span>
+                                    <span class="text-xs font-black text-indigo-900" x-text="item.kP"></span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                    <div class="bg-blue-600 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kP"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-bold">
+                                    <span class="text-slate-600" x-text="item.k + ' / ' + item.kT"></span>
+                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.kS"></span>
+                                </div>
+                            </div>
 
-                        <div>
-                            <div class="flex justify-between items-end mb-1 text-[11px] font-bold">
-                                <div class="text-slate-400 uppercase tracking-tighter">Kecamatan</div>
-                                <div class="text-emerald-600" x-text="item.kcP"></div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase">Kecamatan</span>
+                                    <span class="text-xs font-black text-emerald-600" x-text="item.kcP"></span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kcP"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-bold">
+                                    <span class="text-slate-600" x-text="item.kc + ' / ' + item.kcT"></span>
+                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.kcS"></span>
+                                </div>
                             </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-xs font-black text-slate-800" x-text="item.kc + ' / ' + item.kcT"></span>
-                                <span class="text-[10px] text-red-500 italic font-medium" x-text="'(Sisa: ' + item.kcS + ')'"></span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-emerald-500 h-full rounded-full" :style="'width: ' + item.kcP"></div>
-                            </div>
-                        </div>
 
-                        <div>
-                            <div class="flex justify-between items-end mb-1 text-[11px] font-bold">
-                                <div class="text-slate-400 uppercase tracking-tighter">Sekolah</div>
-                                <div class="text-orange-600" x-text="item.sP"></div>
-                            </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-xs font-black text-slate-800" x-text="item.s + ' / ' + item.sT"></span>
-                                <span class="text-[10px] text-red-500 italic font-medium" x-text="'(Sisa: ' + item.sS + ')'"></span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2">
-                                <div class="bg-orange-500 h-full rounded-full" :style="'width: ' + item.sP"></div>
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase">Sekolah</span>
+                                    <span class="text-xs font-black text-orange-600" x-text="item.sP"></span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                    <div class="bg-orange-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.sP"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-bold">
+                                    <span class="text-slate-600" x-text="item.s + ' / ' + item.sT"></span>
+                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.sS"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="mt-auto bg-slate-50 border-t border-slate-100 p-5 rounded-b-xl">
-                    <div class="flex flex-col space-y-2">
-                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            <span>Progress Sekolah</span>
-                            <span>Persentase</span>
-                        </div>
+
+                    <div class="mt-auto bg-slate-50 border-t border-slate-100 p-6">
                         <div class="flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-xs text-slate-500 font-medium">Target: <span x-text="item.sT"></span></span>
-                                <span class="text-lg font-black text-slate-900" x-text="item.s"></span>
+                            <div>
+                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Capaian Sekolah</p>
+                                <p class="text-xl font-black text-slate-900 tracking-tighter" x-text="item.s"></p>
                             </div>
                             <div class="text-right">
-                                <span class="text-sm font-black text-orange-600 bg-orange-100 px-3 py-1 rounded-lg shadow-sm" x-text="item.sP"></span>
+                                <span class="inline-block bg-orange-100 text-orange-700 text-xs font-black px-4 py-2 rounded-2xl shadow-sm" x-text="item.sP"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
+        </div>
     </main>
+
+    <footer class="bg-white border-t border-slate-200 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">© 2026 - Dashboard Capaian Mitra</p>
+        </div>
+    </footer>
 </body>
 </html>
