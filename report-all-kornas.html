@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report All Kornas</title>
+    <title>Report All Kornas - Monitoring Mitra 2026</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         [x-cloak] { display: none !important; }
+        /* Optimasi cetak agar tidak terpotong */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900" x-data="{ 
@@ -29,9 +40,49 @@
     ],
     get filteredKornas() {
         return this.kornasData.filter(i => i.nama.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    },
+    exportPDF() {
+        const element = document.getElementById('report-area');
+        const opt = {
+            margin: 0.3,
+            filename: 'Report-Monitoring-Kornas-2026.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'in', format: 'a2', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(element).save();
+    },
+    exportImage() {
+        const element = document.getElementById('report-area');
+        html2canvas(element, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Screenshot-Full-Capaian.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    },
+    exportCSV() {
+        const cleanData = this.kornasData.map(item => ({
+            'Nama Kornas': item.nama,
+            'Wilayah': item.wilayah,
+            'Kab Capaian': item.k,
+            'Kab Target': item.kT,
+            'Kec Capaian': item.kc,
+            'Kec Target': item.kcT,
+            'Sekolah Capaian': item.s,
+            'Sekolah Target': item.sT,
+            'Persentase': item.sP
+        }));
+        const csv = Papa.unparse(cleanData);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'Data-Capaian-Kornas.csv');
+        link.click();
     }
 }">
-    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-lg border-b border-indigo-700">
+
+    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-lg border-b border-indigo-700 no-print">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-indigo-500 rounded flex items-center justify-center font-black text-white">M</div>
@@ -49,120 +100,142 @@
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16m-7 6h7" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
         </div>
+
+        <div x-show="mobileMenu" x-cloak @click.away="mobileMenu = false" class="md:hidden bg-indigo-800 border-t border-indigo-700 px-2 pt-2 pb-3 space-y-1">
+            <a href="index.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">Home</a>
+            <a href="report-provinsi.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">38 Provinsi</a>
+            <a href="report-pulau.html" class="block px-3 py-2 rounded-md text-indigo-100 hover:bg-indigo-700">Pulau</a>
+            <a href="report-all-kornas.html" class="block px-3 py-2 rounded-md text-white bg-indigo-900">All Kornas</a>
+        </div>
     </nav>
 
-    <header class="bg-indigo-900 pt-12 pb-24 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-            <div>
-                <span class="bg-indigo-500/30 text-indigo-200 text-[10px] font-black px-3 py-1 rounded mb-3 inline-block uppercase tracking-widest">Mitra Geti 2026</span>
-                <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">Dashboard Capaian Kornas</h1>
-                <p class="text-indigo-300 mt-2 font-bold text-sm italic">Sinkronisasi Terakhir: 16 Maret 2026</p>
-            </div>
-
-            <div class="relative w-full md:w-80">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2"/></svg>
-                </span>
-                <input 
-                    type="text" 
-                    x-model="searchQuery" 
-                    placeholder="Cari Kornas..." 
-                    class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-lg text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-sm"
-                >
-            </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
-                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kabupaten</p>
-                <p class="text-4xl font-black text-white tracking-tighter">514</p>
-            </div>
-            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
-                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kecamatan</p>
-                <p class="text-4xl font-black text-white tracking-tighter">7.088</p>
-            </div>
-            <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
-                <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Target Sekolah</p>
-                <p class="text-4xl font-black text-white tracking-tighter">222.798</p>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 -mt-12 pb-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <template x-for="(item, index) in filteredKornas" :key="index">
-                <div class="bg-white rounded-3xl shadow-xl border-t-8 border-indigo-900 overflow-hidden flex flex-col group hover:shadow-2xl transition-all duration-300">
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <h3 class="text-2xl font-black text-slate-900 tracking-tighter leading-tight" x-text="item.nama"></h3>
-                                <p class="text-blue-600 text-[10px] font-black uppercase tracking-widest mt-1" x-text="item.wilayah"></p>
-                            </div>
-                            <span class="bg-indigo-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg" x-text="'KORNAS ' + (index + 1)"></span>
-                        </div>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase">Kabupaten</span>
-                                    <span class="text-xs font-black text-indigo-900" x-text="item.kP"></span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
-                                    <div class="bg-blue-600 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kP"></div>
-                                </div>
-                                <div class="flex justify-between text-[10px] font-bold">
-                                    <span class="text-slate-600" x-text="item.k + ' / ' + item.kT"></span>
-                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.kS"></span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase">Kecamatan</span>
-                                    <span class="text-xs font-black text-emerald-600" x-text="item.kcP"></span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
-                                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kcP"></div>
-                                </div>
-                                <div class="flex justify-between text-[10px] font-bold">
-                                    <span class="text-slate-600" x-text="item.kc + ' / ' + item.kcT"></span>
-                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.kcS"></span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase">Sekolah</span>
-                                    <span class="text-xs font-black text-orange-600" x-text="item.sP"></span>
-                                </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
-                                    <div class="bg-orange-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.sP"></div>
-                                </div>
-                                <div class="flex justify-between text-[10px] font-bold">
-                                    <span class="text-slate-600" x-text="item.s + ' / ' + item.sT"></span>
-                                    <span class="text-red-500 italic" x-text="'Sisa: ' + item.sS"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto bg-slate-50 border-t border-slate-100 p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Capaian Sekolah</p>
-                                <p class="text-xl font-black text-slate-900 tracking-tighter" x-text="item.s"></p>
-                            </div>
-                            <div class="text-right">
-                                <span class="inline-block bg-orange-100 text-orange-700 text-xs font-black px-4 py-2 rounded-2xl shadow-sm" x-text="item.sP"></span>
-                            </div>
-                        </div>
+    <div id="report-area">
+        <header class="bg-indigo-900 pt-12 pb-24 px-4">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <div>
+                    <span class="bg-indigo-500/30 text-indigo-200 text-[10px] font-black px-3 py-1 rounded mb-3 inline-block uppercase tracking-widest">Mitra Geti 2026</span>
+                    <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic">Dashboard Capaian Kornas</h1>
+                    <p class="text-indigo-300 mt-2 font-bold text-sm italic">Sinkronisasi Terakhir: 16 Maret 2026</p>
+                    
+                    <div class="flex flex-wrap gap-2 mt-6 no-print">
+                        <button @click="exportPDF()" class="bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-black px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a2 2 0 00-.586-1.414l-4-4A2 2 0 0013.414 4H7a2 2 0 00-2 2v13a2 2 0 002 2z"/></svg>
+                            EXPORT PDF
+                        </button>
+                        <button @click="exportImage()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            FULL SCREENSHOT
+                        </button>
+                        <button @click="exportCSV()" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            EXPORT CSV
+                        </button>
                     </div>
                 </div>
-            </template>
-        </div>
-    </main>
 
-    <footer class="bg-white border-t border-slate-200 py-12">
+                <div class="relative w-full md:w-80 no-print">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2"/></svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        x-model="searchQuery" 
+                        placeholder="Cari Kornas..." 
+                        class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-lg text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-sm"
+                    >
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                    <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kabupaten</p>
+                    <p class="text-4xl font-black text-white tracking-tighter">514</p>
+                </div>
+                <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                    <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Kecamatan</p>
+                    <p class="text-4xl font-black text-white tracking-tighter">7.088</p>
+                </div>
+                <div class="bg-white/10 border border-white/20 p-6 rounded-3xl backdrop-blur-md">
+                    <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Total Target Sekolah</p>
+                    <p class="text-4xl font-black text-white tracking-tighter">222.798</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 -mt-12 pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <template x-for="(item, index) in filteredKornas" :key="index">
+                    <div class="bg-white rounded-3xl shadow-xl border-t-8 border-indigo-900 overflow-hidden flex flex-col group hover:shadow-2xl transition-all duration-300">
+                        <div class="p-8">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 class="text-2xl font-black text-slate-900 tracking-tighter leading-tight" x-text="item.nama"></h3>
+                                    <p class="text-blue-600 text-[10px] font-black uppercase tracking-widest mt-1" x-text="item.wilayah"></p>
+                                </div>
+                                <span class="bg-indigo-900 text-white text-[10px] font-black px-3 py-1.5 rounded-lg" x-text="'KORNAS ' + (index + 1)"></span>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase">Kabupaten</span>
+                                        <span class="text-xs font-black text-indigo-900" x-text="item.kP"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                        <div class="bg-blue-600 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kP"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] font-bold">
+                                        <span class="text-slate-600" x-text="item.k + ' / ' + item.kT"></span>
+                                        <span class="text-red-500 italic" x-text="'Sisa: ' + item.kS"></span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase">Kecamatan</span>
+                                        <span class="text-xs font-black text-emerald-600" x-text="item.kcP"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                        <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.kcP"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] font-bold">
+                                        <span class="text-slate-600" x-text="item.kc + ' / ' + item.kcT"></span>
+                                        <span class="text-red-500 italic" x-text="'Sisa: ' + item.kcS"></span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-end mb-2">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase">Sekolah</span>
+                                        <span class="text-xs font-black text-orange-600" x-text="item.sP"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 mb-1">
+                                        <div class="bg-orange-500 h-full rounded-full transition-all duration-1000" :style="'width: ' + item.sP"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] font-bold">
+                                        <span class="text-slate-600" x-text="item.s + ' / ' + item.sT"></span>
+                                        <span class="text-red-500 italic" x-text="'Sisa: ' + item.sS"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto bg-slate-50 border-t border-slate-100 p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Capaian Sekolah</p>
+                                    <p class="text-xl font-black text-slate-900 tracking-tighter" x-text="item.s"></p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-block bg-orange-100 text-orange-700 text-xs font-black px-4 py-2 rounded-2xl shadow-sm" x-text="item.sP"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </main>
+    </div> <footer class="bg-white border-t border-slate-200 py-12 no-print">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">© 2026 - Dashboard Capaian Mitra</p>
         </div>

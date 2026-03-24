@@ -4,61 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Mitra - Rekapitulasi 38 Provinsi</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <style>
         [x-cloak] { display: none !important; }
+        /* Optimasi cetak agar tidak terpotong */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 font-sans" x-data="{ 
     mobileMenu: false,
     search: '',
     provinsiData: [
-        { nama: 'PROV. JAWA BARAT', kornas: 'ALIT, BONGGAS ADHI CHANDRA, KADIRIYANTO, OVOY', kab: { t: 27, c: 10, s: 17, p: '37.04%' }, kec: { t: 583, c: 104, s: 479, p: '17.84%' }, sek: { t: 31206, c: 826, s: 30380, p: '2.65%' } },
-        { nama: 'PROV. JAWA TIMUR', kornas: 'KADIRIYANTO, OVOY', kab: { t: 38, c: 13, s: 25, p: '34.21%' }, kec: { t: 629, c: 185, s: 444, p: '29.41%' }, sek: { t: 27713, c: 1571, s: 26142, p: '5.67%' } },
-        { nama: 'PROV. JAWA TENGAH', kornas: 'ALIT, KADIRIYANTO, OVOY', kab: { t: 35, c: 9, s: 26, p: '25.71%' }, kec: { t: 555, c: 117, s: 438, p: '21.08%' }, sek: { t: 24626, c: 674, s: 23952, p: '2.74%' } },
-        { nama: 'PROV. SUMATERA UTARA', kornas: 'FUAD', kab: { t: 33, c: 19, s: 14, p: '57.58%' }, kec: { t: 454, c: 247, s: 207, p: '54.41%' }, sek: { t: 14357, c: 321, s: 14036, p: '2.24%' } },
-        { nama: 'PROV. SULAWESI SELATAN', kornas: 'OVOY, RUSTAN', kab: { t: 24, c: 18, s: 6, p: '75.00%' }, kec: { t: 306, c: 242, s: 64, p: '79.08%' }, sek: { t: 9395, c: 3068, s: 6327, p: '32.66%' } },
-        { nama: 'PROV. NUSA TENGGARA TIMUR', kornas: 'KADIRIYANTO', kab: { t: 22, c: 2, s: 20, p: '9.09%' }, kec: { t: 312, c: 15, s: 297, p: '4.81%' }, sek: { t: 8066, c: 0, s: 8066, p: '0.00%' } },
-        { nama: 'PROV. BANTEN', kornas: 'KADIRIYANTO, OVOY', kab: { t: 8, c: 6, s: 2, p: '75.00%' }, kec: { t: 152, c: 108, s: 44, p: '71.05%' }, sek: { t: 7645, c: 842, s: 6803, p: '11.01%' } },
-        { nama: 'PROV. LAMPUNG', kornas: 'KADIRIYANTO', kab: { t: 15, c: 1, s: 14, p: '6.67%' }, kec: { t: 225, c: 9, s: 216, p: '4.00%' }, sek: { t: 7241, c: 211, s: 7030, p: '2.91%' } },
-        { nama: 'PROV. SUMATERA SELATAN', kornas: 'KADIRIYANTO', kab: { t: 17, c: 0, s: 17, p: '0.00%' }, kec: { t: 241, c: 0, s: 241, p: '0.00%' }, sek: { t: 7138, c: 0, s: 7138, p: '0.00%' } },
-        { nama: 'PROV. KALIMANTAN BARAT', kornas: 'YOHANAH', kab: { t: 14, c: 4, s: 10, p: '28.57%' }, kec: { t: 173, c: 37, s: 136, p: '21.39%' }, sek: { t: 6562, c: 0, s: 6562, p: '0.00%' } },
-        { nama: 'PROV. RIAU', kornas: 'ALIT, BONGGAS ADHI CHANDRA', kab: { t: 12, c: 1, s: 11, p: '8.33%' }, kec: { t: 172, c: 7, s: 165, p: '4.07%' }, sek: { t: 6039, c: 19, s: 6020, p: '0.31%' } },
-        { nama: 'PROV. SUMATERA BARAT', kornas: 'BONGGAS ADHI CHANDRA', kab: { t: 19, c: 5, s: 14, p: '26.32%' }, kec: { t: 179, c: 49, s: 130, p: '27.37%' }, sek: { t: 5937, c: 28, s: 5909, p: '0.47%' } },
-        { nama: 'PROV. ACEH', kornas: 'KADIRIYANTO', kab: { t: 23, c: 1, s: 22, p: '4.35%' }, kec: { t: 283, c: 3, s: 280, p: '1.06%' }, sek: { t: 5669, c: 0, s: 5669, p: '0.00%' } },
-        { nama: 'PROV. NUSA TENGGARA BARAT', kornas: 'FUAD', kab: { t: 10, c: 9, s: 1, p: '90.00%' }, kec: { t: 117, c: 96, s: 21, p: '82.05%' }, sek: { t: 5239, c: 0, s: 5239, p: '0.00%' } },
-        { nama: 'PROV. D.K.I. JAKARTA', kornas: 'YOHANAH', kab: { t: 6, c: 2, s: 4, p: '33.33%' }, kec: { t: 44, c: 18, s: 26, p: '40.91%' }, sek: { t: 4412, c: 2, s: 4410, p: '0.05%' } },
-        { nama: 'PROV. SULAWESI TENGAH', kornas: 'BONGGAS ADHI CHANDRA, OVOY', kab: { t: 13, c: 5, s: 8, p: '38.46%' }, kec: { t: 175, c: 39, s: 136, p: '22.29%' }, sek: { t: 4264, c: 83, s: 4181, p: '1.95%' } },
-        { nama: 'PROV. KALIMANTAN SELATAN', kornas: 'FAKHRI MASHAR', kab: { t: 13, c: 1, s: 12, p: '7.69%' }, kec: { t: 155, c: 5, s: 150, p: '3.23%' }, sek: { t: 4000, c: 45, s: 3955, p: '1.13%' } },
-        { nama: 'PROV. KALIMANTAN TENGAH', kornas: 'YOHANAH', kab: { t: 14, c: 4, s: 10, p: '28.57%' }, kec: { t: 136, c: 33, s: 103, p: '24.26%' }, sek: { t: 3950, c: 29, s: 3921, p: '0.73%' } },
-        { nama: 'PROV. SULAWESI TENGGARA', kornas: 'RUSTAN', kab: { t: 17, c: 12, s: 5, p: '70.59%' }, kec: { t: 222, c: 150, s: 72, p: '67.57%' }, sek: { t: 3868, c: 1606, s: 2262, p: '41.52%' } },
-        { nama: 'PROV. JAMBI', kornas: 'NURUL HUDA', kab: { t: 11, c: 10, s: 1, p: '90.91%' }, kec: { t: 142, c: 129, s: 13, p: '90.85%' }, sek: { t: 3656, c: 2026, s: 1630, p: '55.42%' } },
-        { nama: 'PROV. SULAWESI UTARA', kornas: 'ALIT, BONGGAS ADHI CHANDRA', kab: { t: 15, c: 2, s: 13, p: '13.33%' }, kec: { t: 171, c: 3, s: 168, p: '1.75%' }, sek: { t: 3386, c: 5, s: 3381, p: '0.15%' } },
-        { nama: 'PROV. KALIMANTAN TIMUR', kornas: 'BONGGAS ADHI CHANDRA', kab: { t: 10, c: 10, s: 0, p: '100.00%' }, kec: { t: 104, c: 104, s: 0, p: '100.00%' }, sek: { t: 3169, c: 271, s: 2898, p: '8.55%' } },
-        { nama: 'PROV. BALI', kornas: 'FUAD', kab: { t: 9, c: 5, s: 4, p: '55.56%' }, kec: { t: 57, c: 28, s: 29, p: '49.12%' }, sek: { t: 3121, c: 0, s: 3121, p: '0.00%' } },
-        { nama: 'PROV. MALUKU', kornas: 'OVOY, RUSTAN', kab: { t: 11, c: 10, s: 1, p: '90.91%' }, kec: { t: 118, c: 101, s: 17, p: '85.59%' }, sek: { t: 2981, c: 910, s: 2071, p: '30.53%' } },
-        { nama: 'PROV. D.I. YOGYAKARTA', kornas: 'YOHANAH', kab: { t: 5, c: 4, s: 1, p: '80.00%' }, kec: { t: 77, c: 59, s: 18, p: '76.62%' }, sek: { t: 2730, c: 10, s: 2720, p: '0.37%' } },
-        { nama: 'PROV. MALUKU UTARA', kornas: 'NURUL HUDA', kab: { t: 10, c: 10, s: 0, p: '100.00%' }, kec: { t: 118, c: 118, s: 0, p: '100.00%' }, sek: { t: 2233, c: 796, s: 1437, p: '35.65%' } },
-        { nama: 'PROV. BENGKULU', kornas: 'BONGGAS ADHI CHANDRA', kab: { t: 10, c: 1, s: 9, p: '10.00%' }, kec: { t: 128, c: 11, s: 117, p: '8.59%' }, sek: { t: 2143, c: 0, s: 2143, p: '0.00%' } },
-        { nama: 'PROV. SULAWESI BARAT', kornas: 'NURUL HUDA, RUSTAN', kab: { t: 6, c: 6, s: 0, p: '100.00%' }, kec: { t: 69, c: 69, s: 0, p: '100.00%' }, sek: { t: 2019, c: 1816, s: 203, p: '89.95%' } },
-        { nama: 'PROV. KEPULAUAN RIAU', kornas: 'BONGGAS ADHI CHANDRA', kab: { t: 7, c: 1, s: 6, p: '14.29%' }, kec: { t: 80, c: 14, s: 66, p: '17.50%' }, sek: { t: 1704, c: 0, s: 1704, p: '0.00%' } },
-        { nama: 'PROV. GORONTALO', kornas: 'ALIT, YOHANAH', kab: { t: 6, c: 2, s: 4, p: '33.33%' }, kec: { t: 77, c: 20, s: 57, p: '25.97%' }, sek: { t: 1429, c: 4, s: 1425, p: '0.28%' } },
-        { nama: 'PROV. PAPUA', kornas: 'SIGIT GOZALI', kab: { t: 9, c: 0, s: 9, p: '0.00%' }, kec: { t: 98, c: 0, s: 98, p: '0.00%' }, sek: { t: 1303, c: 0, s: 1303, p: '0.00%' } },
-        { nama: 'PROV. KEPULAUAN BANGKA BELITUNG', kornas: 'YOHANAH', kab: { t: 7, c: 6, s: 1, p: '85.71%' }, kec: { t: 47, c: 40, s: 7, p: '85.11%' }, sek: { t: 1230, c: 21, s: 1209, p: '1.71%' } },
-        { nama: 'PROV. PAPUA PEGUNUNGAN', kornas: 'SIGIT GOZALI', kab: { t: 8, c: 0, s: 8, p: '0.00%' }, kec: { t: 232, c: 0, s: 232, p: '0.00%' }, sek: { t: 954, c: 0, s: 954, p: '0.00%' } },
-        { nama: 'PROV. PAPUA BARAT DAYA', kornas: 'SIGIT GOZALI', kab: { t: 6, c: 0, s: 6, p: '0.00%' }, kec: { t: 124, c: 0, s: 124, p: '0.00%' }, sek: { t: 852, c: 0, s: 852, p: '0.00%' } },
-        { nama: 'PROV. PAPUA TENGAH', kornas: 'SIGIT GOZALI', kab: { t: 8, c: 1, s: 7, p: '12.50%' }, kec: { t: 113, c: 18, s: 95, p: '15.93%' }, sek: { t: 852, c: 65, s: 787, p: '7.63%' } },
-        { nama: 'PROV. PAPUA BARAT', kornas: 'SIGIT GOZALI', kab: { t: 7, c: 0, s: 7, p: '0.00%' }, kec: { t: 84, c: 0, s: 84, p: '0.00%' }, sek: { t: 828, c: 0, s: 828, p: '0.00%' } },
-        { nama: 'PROV. PAPUA SELATAN', kornas: 'SIGIT GOZALI', kab: { t: 4, c: 0, s: 4, p: '0.00%' }, kec: { t: 81, c: 0, s: 81, p: '0.00%' }, sek: { t: 813, c: 0, s: 813, p: '0.00%' } },
-        { nama: 'PROV. KALIMANTAN UTARA', kornas: 'BONGGAS ADHI CHANDRA', kab: { t: 5, c: 2, s: 3, p: '40.00%' }, kec: { t: 55, c: 19, s: 36, p: '34.55%' }, sek: { t: 807, c: 85, s: 722, p: '10.53%' } }
+        { nama: 'PROV. JAWA BARAT', kornas: 'ALIT, BONGGAS, KADI, OVOY, YOHANAH', kab: { t: 27, c: 19, s: 8, p: '70.37%' }, kec: { t: 583, c: 355, s: 228, p: '60.89%' }, sek: { t: 31206, c: 11687, s: 19519, p: '37.45%' } },
+        { nama: 'PROV. JAWA TIMUR', kornas: 'ALIT, BONGGAS, FAKHRI, KADI, OVOY, YOHANAH', kab: { t: 38, c: 31, s: 7, p: '81.58%' }, kec: { t: 629, c: 317, s: 312, p: '50.40%' }, sek: { t: 27713, c: 7436, s: 20277, p: '26.83%' } },
+        { nama: 'PROV. JAWA TENGAH', kornas: 'ALIT, BONGGAS, FAKHRI, KADI, OVOY, YOHANAH', kab: { t: 35, c: 27, s: 8, p: '77.14%' }, kec: { t: 555, c: 220, s: 335, p: '39.64%' }, sek: { t: 24626, c: 3796, s: 20830, p: '15.41%' } },
+        { nama: 'PROV. SUMATERA UTARA', kornas: 'ALIT, BONGGAS, FAKHRI, FUAD', kab: { t: 33, c: 24, s: 9, p: '72.73%' }, kec: { t: 454, c: 231, s: 223, p: '50.88%' }, sek: { t: 14357, c: 960, s: 13397, p: '6.69%' } },
+        { nama: 'PROV. SULAWESI SELATAN', kornas: 'ALIT, FAKHRI, OVOY, RUSTAN', kab: { t: 24, c: 22, s: 2, p: '91.67%' }, kec: { t: 306, c: 237, s: 69, p: '77.45%' }, sek: { t: 9395, c: 4408, s: 4987, p: '46.92%' } },
+        { nama: 'PROV. NUSA TENGGARA TIMUR', kornas: 'ALIT, BONGGAS, FAKHRI, KADI, YOHANAH', kab: { t: 22, c: 20, s: 2, p: '90.91%' }, kec: { t: 312, c: 221, s: 91, p: '70.83%' }, sek: { t: 8066, c: 4305, s: 3761, p: '53.37%' } },
+        { nama: 'PROV. BANTEN', kornas: 'FAKHRI, KADI, OVOY, YOHANAH', kab: { t: 8, c: 7, s: 1, p: '87.50%' }, kec: { t: 152, c: 89, s: 63, p: '58.55%' }, sek: { t: 7645, c: 1710, s: 5935, p: '22.37%' } },
+        { nama: 'PROV. LAMPUNG', kornas: 'BONGGAS, KADI', kab: { t: 15, c: 11, s: 4, p: '73.33%' }, kec: { t: 225, c: 85, s: 140, p: '37.78%' }, sek: { t: 7241, c: 1650, s: 5591, p: '22.79%' } },
+        { nama: 'PROV. SUMATERA SELATAN', kornas: 'BONGGAS, FAKHRI, KADI', kab: { t: 17, c: 10, s: 7, p: '58.82%' }, kec: { t: 241, c: 67, s: 174, p: '27.80%' }, sek: { t: 7138, c: 1132, s: 6006, p: '15.86%' } },
+        { nama: 'PROV. KALIMANTAN BARAT', kornas: 'ALIT, BONGGAS, FAKHRI, OVOY, YOHANAH', kab: { t: 14, c: 11, s: 3, p: '78.57%' }, kec: { t: 173, c: 66, s: 107, p: '38.15%' }, sek: { t: 6562, c: 966, s: 5596, p: '14.72%' } },
+        { nama: 'PROV. RIAU', kornas: 'ALIT, BONGGAS', kab: { t: 12, c: 1, s: 11, p: '8.33%' }, kec: { t: 172, c: 9, s: 163, p: '5.23%' }, sek: { t: 6039, c: 180, s: 5859, p: '2.98%' } },
+        { nama: 'PROV. SUMATERA BARAT', kornas: 'BONGGAS', kab: { t: 19, c: 5, s: 14, p: '26.32%' }, kec: { t: 179, c: 37, s: 142, p: '20.67%' }, sek: { t: 5937, c: 28, s: 5909, p: '0.47%' } },
+        { nama: 'PROV. ACEH', kornas: 'BONGGAS, FAKHRI, KADI, YOHANAH', kab: { t: 23, c: 11, s: 12, p: '47.83%' }, kec: { t: 283, c: 52, s: 231, p: '18.37%' }, sek: { t: 5669, c: 445, s: 5224, p: '7.85%' } },
+        { nama: 'PROV. NUSA TENGGARA BARAT', kornas: 'ALIT, BONGGAS, FAKHRI, FUAD, YOHANAH', kab: { t: 10, c: 10, s: 0, p: '100.00%' }, kec: { t: 117, c: 98, s: 19, p: '83.76%' }, sek: { t: 5239, c: 1940, s: 3299, p: '37.03%' } },
+        { nama: 'PROV. D.K.I. JAKARTA', kornas: 'ALIT, YOHANAH', kab: { t: 6, c: 5, s: 1, p: '83.33%' }, kec: { t: 44, c: 22, s: 22, p: '50.00%' }, sek: { t: 4412, c: 87, s: 4325, p: '1.97%' } },
+        { nama: 'PROV. SULAWESI TENGAH', kornas: 'ALIT, BONGGAS, FAKHRI, OVOY', kab: { t: 13, c: 9, s: 4, p: '69.23%' }, kec: { t: 175, c: 90, s: 85, p: '51.43%' }, sek: { t: 4264, c: 695, s: 3569, p: '16.30%' } },
+        { nama: 'PROV. KALIMANTAN SELATAN', kornas: 'FAKHRI', kab: { t: 13, c: 1, s: 12, p: '7.69%' }, kec: { t: 155, c: 5, s: 150, p: '3.23%' }, sek: { t: 4000, c: 45, s: 3955, p: '1.13%' } },
+        { nama: 'PROV. KALIMANTAN TENGAH', kornas: 'ALIT, FAKHRI, YOHANAH', kab: { t: 14, c: 7, s: 7, p: '50.00%' }, kec: { t: 136, c: 11, s: 125, p: '8.09%' }, sek: { t: 3950, c: 80, s: 3870, p: '2.03%' } },
+        { nama: 'PROV. SULAWESI TENGGARA', kornas: 'ALIT, FAKHRI, RUSTAN', kab: { t: 17, c: 14, s: 3, p: '82.35%' }, kec: { t: 222, c: 157, s: 65, p: '70.72%' }, sek: { t: 3868, c: 1680, s: 2188, p: '43.43%' } },
+        { nama: 'PROV. JAMBI', kornas: 'ALIT, FAKHRI, NURUL HUDA, OVOY', kab: { t: 11, c: 10, s: 1, p: '90.91%' }, kec: { t: 142, c: 138, s: 4, p: '97.18%' }, sek: { t: 3656, c: 2060, s: 1596, p: '56.35%' } },
+        { nama: 'PROV. SULAWESI UTARA', kornas: 'ALIT, BONGGAS, OVOY', kab: { t: 15, c: 8, s: 7, p: '53.33%' }, kec: { t: 171, c: 44, s: 127, p: '25.73%' }, sek: { t: 3386, c: 221, s: 3165, p: '6.53%' } },
+        { nama: 'PROV. KALIMANTAN TIMUR', kornas: 'ALIT, BONGGAS, OVOY', kab: { t: 10, c: 10, s: 0, p: '100.00%' }, kec: { t: 104, c: 92, s: 12, p: '88.46%' }, sek: { t: 3169, c: 707, s: 2462, p: '22.31%' } },
+        { nama: 'PROV. BALI', kornas: 'ALIT, FUAD, KADI', kab: { t: 9, c: 6, s: 3, p: '66.67%' }, kec: { t: 57, c: 17, s: 40, p: '29.82%' }, sek: { t: 3121, c: 22, s: 3099, p: '0.70%' } },
+        { nama: 'PROV. MALUKU', kornas: 'ALIT, OVOY, RUSTAN', kab: { t: 11, c: 10, s: 1, p: '90.91%' }, kec: { t: 118, c: 87, s: 31, p: '73.73%' }, sek: { t: 2981, c: 1190, s: 1791, p: '39.92%' } },
+        { nama: 'PROV. D.I. YOGYAKARTA', kornas: 'FAKHRI, OVOY, YOHANAH', kab: { t: 5, c: 5, s: 0, p: '100.00%' }, kec: { t: 77, c: 4, s: 73, p: '5.19%' }, sek: { t: 2730, c: 20, s: 2710, p: '0.73%' } },
+        { nama: 'PROV. MALUKU UTARA', kornas: 'ALIT, NURUL HUDA, OVOY', kab: { t: 10, c: 10, s: 0, p: '100.00%' }, kec: { t: 118, c: 102, s: 16, p: '86.44%' }, sek: { t: 2233, c: 800, s: 1433, p: '35.83%' } },
+        { nama: 'PROV. BENGKULU', kornas: 'BONGGAS, FAKHRI', kab: { t: 10, c: 2, s: 8, p: '20.00%' }, kec: { t: 128, c: 18, s: 110, p: '14.06%' }, sek: { t: 2143, c: 29, s: 2114, p: '1.35%' } },
+        { nama: 'PROV. SULAWESI BARAT', kornas: 'ALIT, NURUL HUDA, RUSTAN', kab: { t: 6, c: 6, s: 0, p: '100.00%' }, kec: { t: 69, c: 69, s: 0, p: '100.00%' }, sek: { t: 2019, c: 1911, s: 108, p: '94.65%' } },
+        { nama: 'PROV. KEPULAUAN RIAU', kornas: 'BONGGAS', kab: { t: 7, c: 1, s: 6, p: '14.29%' }, kec: { t: 80, c: 14, s: 66, p: '17.50%' }, sek: { t: 1704, c: 0, s: 1704, p: '0.00%' } },
+        { nama: 'PROV. GORONTALO', kornas: 'ALIT, FAKHRI, YOHANAH', kab: { t: 6, c: 5, s: 1, p: '83.33%' }, kec: { t: 77, c: 34, s: 43, p: '44.16%' }, sek: { t: 1429, c: 361, s: 1068, p: '25.26%' } },
+        { nama: 'PROV. PAPUA', kornas: 'FAKHRI, OVOY, SIGIT', kab: { t: 9, c: 2, s: 7, p: '22.22%' }, kec: { t: 98, c: 6, s: 92, p: '6.12%' }, sek: { t: 1303, c: 27, s: 1276, p: '2.07%' } },
+        { nama: 'PROV. KEP. BANGKA BELITUNG', kornas: 'BONGGAS, YOHANAH', kab: { t: 7, c: 7, s: 0, p: '100.00%' }, kec: { t: 47, c: 27, s: 20, p: '57.45%' }, sek: { t: 1230, c: 325, s: 905, p: '26.42%' } },
+        { nama: 'PROV. PAPUA PEGUNUNGAN', kornas: 'SIGIT', kab: { t: 8, c: 0, s: 8, p: '0.00%' }, kec: { t: 232, c: 0, s: 232, p: '0.00%' }, sek: { t: 954, c: 0, s: 954, p: '0.00%' } },
+        { nama: 'PROV. PAPUA BARAT DAYA', kornas: 'FAKHRI, OVOY, SIGIT', kab: { t: 6, c: 3, s: 3, p: '50.00%' }, kec: { t: 124, c: 10, s: 114, p: '8.06%' }, sek: { t: 852, c: 39, s: 813, p: '4.58%' } },
+        { nama: 'PROV. PAPUA TENGAH', kornas: 'FAKHRI, SIGIT, YOHANAH', kab: { t: 8, c: 3, s: 5, p: '37.50%' }, kec: { t: 113, c: 10, s: 103, p: '8.85%' }, sek: { t: 852, c: 85, s: 767, p: '9.98%' } },
+        { nama: 'PROV. PAPUA BARAT', kornas: 'FAKHRI, SIGIT', kab: { t: 7, c: 1, s: 6, p: '14.29%' }, kec: { t: 84, c: 2, s: 82, p: '2.38%' }, sek: { t: 828, c: 15, s: 813, p: '1.81%' } },
+        { nama: 'PROV. PAPUA SELATAN', kornas: 'SIGIT', kab: { t: 4, c: 0, s: 4, p: '0.00%' }, kec: { t: 81, c: 0, s: 81, p: '0.00%' }, sek: { t: 813, c: 0, s: 813, p: '0.00%' } },
+        { nama: 'PROV. KALIMANTAN UTARA', kornas: 'ALIT, BONGGAS, FAKHRI', kab: { t: 5, c: 3, s: 2, p: '60.00%' }, kec: { t: 55, c: 30, s: 25, p: '54.55%' }, sek: { t: 807, c: 141, s: 666, p: '17.47%' } }
     ],
     get filteredData() {
         return this.provinsiData.filter(i => i.nama.toLowerCase().includes(this.search.toLowerCase()));
+    },
+    exportPDF() {
+        const element = document.getElementById('report-area');
+        const opt = {
+            margin: 0.2,
+            filename: 'Rekapitulasi-Provinsi-2026.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'a2', orientation: 'landscape' }
+        };
+        html2pdf().set(opt).from(element).save();
+    },
+    exportImage() {
+        const element = document.getElementById('report-area');
+        html2canvas(element, { scale: 2, backgroundColor: '#f8fafc' }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Rekap-Provinsi.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    },
+    exportCSV() {
+        const cleanData = this.provinsiData.map(item => ({
+            'Provinsi': item.nama,
+            'Kornas': item.kornas,
+            'Kab Capaian': item.kab.c,
+            'Kab Target': item.kab.t,
+            'Kec Capaian': item.kec.c,
+            'Kec Target': item.kec.t,
+            'Sekolah Capaian': item.sek.c,
+            'Sekolah Target': item.sek.t,
+            'Persentase Sekolah': item.sek.p
+        }));
+        const csv = Papa.unparse(cleanData);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'Data-Rekap-Provinsi.csv');
+        link.click();
     }
 }">
 
-    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-lg border-b border-indigo-700">
+    <nav class="bg-indigo-900 text-white sticky top-0 z-50 shadow-lg border-b border-indigo-700 no-print">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-indigo-500 rounded flex items-center justify-center font-black text-white">M</div>
@@ -85,87 +135,100 @@
         </div>
     </nav>
 
-    <header class="max-w-7xl mx-auto py-10 px-4">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-                <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Mitra Geti 2026</span>
-                <h1 class="text-4xl font-black text-slate-900 mt-2">REKAPITULASI PROVINSI</h1>
-                <p class="text-slate-500 mt-2 flex items-center">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
-                    Sinkronisasi Terakhir: <span class="font-bold ml-1 text-slate-700">16 Maret 2026</span>
-                </p>
-            </div>
-            <div class="relative w-full md:w-72">
-                <input type="text" x-model="search" placeholder="Cari Provinsi..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm transition-all">
-                <svg class="w-5 h-5 absolute left-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-        </div>
-    </header>
+    <div id="report-area">
+        <header class="max-w-7xl mx-auto py-10 px-4">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Mitra Geti 2026</span>
+                    <h1 class="text-4xl font-black text-slate-900 mt-2">REKAPITULASI PROVINSI</h1>
+                    <p class="text-slate-500 mt-2 flex items-center">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                        Sinkronisasi Terakhir: <span class="font-bold ml-1 text-slate-700">16 Maret 2026</span>
+                    </p>
 
-    <main class="max-w-7xl mx-auto px-4 pb-24">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <template x-for="(item, index) in filteredData" :key="index">
-                <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-xl hover:border-indigo-200 transition-all duration-300 relative group">
-                    
-                    <div class="absolute top-8 right-8 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs" x-text="index + 1"></div>
-
-                    <h3 class="font-black text-2xl text-slate-800 mb-2 pr-10" x-text="item.nama"></h3>
-                    
-                    <div class="flex flex-wrap gap-1.5 mb-8">
-                        <template x-for="name in item.kornas.split(',')" :key="name">
-                            <span class="bg-rose-50 border border-rose-100 text-rose-800 text-[9px] px-3 py-1 rounded-full font-bold uppercase" x-text="name.trim()"></span>
-                        </template>
-                    </div>
-
-                    <div class="space-y-8">
-                        <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kab/Kota</span>
-                                <span class="text-lg font-black text-indigo-600" x-text="item.kab.p"></span>
-                            </div>
-                            <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
-                                <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.kab.p}`"></div>
-                            </div>
-                            <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
-                                <span x-text="`${item.kab.c} / ${item.kab.t}`"></span>
-                                <span class="text-rose-500" x-text="item.kab.s > 0 ? `(Sisa: ${item.kab.s})` : ''"></span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kecamatan</span>
-                                <span class="text-lg font-black text-emerald-600" x-text="item.kec.p"></span>
-                            </div>
-                            <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
-                                <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.kec.p}`"></div>
-                            </div>
-                            <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
-                                <span x-text="`${item.kec.c} / ${item.kec.t}`"></span>
-                                <span class="text-rose-500" x-text="item.kec.s > 0 ? `(Sisa: ${item.kec.s})` : ''"></span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-end mb-2">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sekolah</span>
-                                <span class="text-lg font-black text-orange-500" x-text="item.sek.p"></span>
-                            </div>
-                            <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
-                                <div class="bg-orange-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.sek.p}`"></div>
-                            </div>
-                            <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
-                                <span x-text="`${item.sek.c} / ${item.sek.t}`"></span>
-                                <span class="text-rose-600 font-extrabold" x-text="item.sek.s > 0 ? `(Sisa: ${item.sek.s})` : ''"></span>
-                            </div>
-                        </div>
+                    <div class="flex flex-wrap gap-2 mt-6 no-print">
+                        <button @click="exportPDF()" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition">
+                            PDF REPORT
+                        </button>
+                        <button @click="exportImage()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition">
+                            IMAGE CAPTURE
+                        </button>
+                        <button @click="exportCSV()" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition">
+                            CSV DATA
+                        </button>
                     </div>
                 </div>
-            </template>
-        </div>
-    </main>
 
-    <footer class="bg-white border-t border-slate-200 py-12">
+                <div class="relative w-full md:w-72 no-print">
+                    <input type="text" x-model="search" placeholder="Cari Provinsi..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none shadow-sm transition-all">
+                    <svg class="w-5 h-5 absolute left-3 top-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 pb-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <template x-for="(item, index) in filteredData" :key="index">
+                    <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 flex flex-col hover:shadow-xl hover:border-indigo-200 transition-all duration-300 relative group">
+                        
+                        <div class="absolute top-8 right-8 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs" x-text="index + 1"></div>
+
+                        <h3 class="font-black text-2xl text-slate-800 mb-2 pr-10" x-text="item.nama"></h3>
+                        
+                        <div class="flex flex-wrap gap-1.5 mb-8">
+                            <template x-for="name in item.kornas.split(',')" :key="name">
+                                <span class="bg-rose-50 border border-rose-100 text-rose-800 text-[9px] px-3 py-1 rounded-full font-bold uppercase" x-text="name.trim()"></span>
+                            </template>
+                        </div>
+
+                        <div class="space-y-8">
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kab/Kota</span>
+                                    <span class="text-lg font-black text-indigo-600" x-text="item.kab.p"></span>
+                                </div>
+                                <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                                    <div class="bg-indigo-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.kab.p}`"></div>
+                                </div>
+                                <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
+                                    <span x-text="`${item.kab.c} / ${item.kab.t}`"></span>
+                                    <span class="text-rose-500" x-text="item.kab.s > 0 ? `(Sisa: ${item.kab.s})` : ''"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Kecamatan</span>
+                                    <span class="text-lg font-black text-emerald-600" x-text="item.kec.p"></span>
+                                </div>
+                                <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.kec.p}`"></div>
+                                </div>
+                                <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
+                                    <span x-text="`${item.kec.c} / ${item.kec.t}`"></span>
+                                    <span class="text-rose-500" x-text="item.kec.s > 0 ? `(Sisa: ${item.kec.s})` : ''"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sekolah</span>
+                                    <span class="text-lg font-black text-orange-500" x-text="item.sek.p"></span>
+                                </div>
+                                <div class="bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                                    <div class="bg-orange-500 h-full rounded-full transition-all duration-1000" :style="`width: ${item.sek.p}`"></div>
+                                </div>
+                                <div class="flex justify-between text-[11px] font-bold text-slate-500 uppercase">
+                                    <span x-text="`${item.sek.c} / ${item.sek.t}`"></span>
+                                    <span class="text-rose-600 font-extrabold" x-text="item.sek.s > 0 ? `(Sisa: ${item.sek.s})` : ''"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </main>
+    </div> <footer class="bg-white border-t border-slate-200 py-12 no-print">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">© 2026 - Dashboard Capaian Mitra </p>
         </div>
